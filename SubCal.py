@@ -5,13 +5,15 @@ def Gauss_Matrix(M,row,col):
     shape=M.shape
     for i in range(shape[0]):
         if i !=row:
-            #print(i,col,M[i,col])
             if M[i,col]==1:
                 M[i,:]=(M[i,:]+M[row,:])%2
-                #print(M)
+
     return M 
 
 def linear_independence(H,constrain):
+
+    # Determine the ``constrain" if linearly independent with ``H" or not.
+
     Hrow=H.shape[0]
     Hcol=H.shape[1]
     test=H
@@ -20,9 +22,9 @@ def linear_independence(H,constrain):
         now_one=-1
         for j in range(Hrow):
             if test[j,i]==1 and (not (np.any(test[j,:i]==1))):
-                now_one=j#第j行的是1
+                now_one=j
                 break
-        if now_one!=-1:#找到了1
+        if now_one!=-1:
             independent_q.append((i,now_one))
             for j in range(Hrow):       
                 if j!=now_one and test[j,i]==1:
@@ -31,6 +33,9 @@ def linear_independence(H,constrain):
     return test,independent_q,constrain
 
 def rankcal(test):
+
+    # Calculate the rank of a matrix ``test" in mod 2 addition / multiplation.
+
     Hrow=test.shape[0]
     Hcol=test.shape[1]
     rank=0
@@ -38,9 +43,9 @@ def rankcal(test):
         now_one=-1
         for j in range(Hrow):
             if test[j,i]==1 and (not (np.any(test[j,:i]==1))):
-                now_one=j#第j行的是1
+                now_one=j
                 break
-        if now_one!=-1:#找到了1
+        if now_one!=-1:
             rank+=1
             for j in range(Hrow):       
                 if j!=now_one and test[j,i]==1:
@@ -81,8 +86,7 @@ def iterbin(n):
 
 def codeword_cal(H,cons):
     M,l,constrain=linear_independence(H,cons)
-    #print(M,l,constrain)
-    #计算自由的比特
+
     shape=M.shape
     independent_q={i for i in range(shape[1])}
     dependent_q=[]
@@ -154,9 +158,9 @@ class code:
 
         H=self.H
         old_activate_q=self.activate_q
-        #print(self.activate_q.index(qid),stab_id)
+
         H=Gauss_Matrix(H,stab_id,self.activate_q.index(qid))
-        #print(H)
+
         new_actvate_q=cp.deepcopy(self.activate_q)
         new_actvate_q.pop(new_actvate_q.index(qid))
 
@@ -168,7 +172,7 @@ class code:
         for idx,i in enumerate(new_actvate_q):
             for jdx,j in enumerate(stab_list):
                 new_H[jdx,idx]=H[j,self.activate_q.index(i)]
-        #print(new_H)
+
         self.H=new_H
         self.activate_q=new_actvate_q
         return qid,H[stab_id,:],old_activate_q
@@ -177,7 +181,7 @@ class code:
         self.partition_AB(A_zone)
         if not (self.A_stab or self.B_stab):
             process=self.process_mid_delete()
-            #print(process[1],self.H)
+
             self.H=(process[1]@self.H)%2
             print(f"A_zone:{A_zone}\nH:{self.H}\nactivate_q:{self.activate_q}")
             self.partition_AB(A_zone)
@@ -203,11 +207,11 @@ class code:
             self.partition_AB(A_zone)
             if not (self.A_stab or self.B_stab):
                 process=self.process_mid_delete()
-                #print(process[1],self.H)
+
                 self.H=(process[1]@self.H)%2
-                #print(f"A_zone:{A_zone}\nH:{self.H}\nactivate_q:{self.activate_q}")
+
                 self.partition_AB(A_zone)
-                #print(f"A_stab:{self.A_stab}\nB_stab:{self.B_stab}\nbound_stab:{self.bound_stab}")
+
 
 
 
